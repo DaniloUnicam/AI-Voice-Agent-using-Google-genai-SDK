@@ -2,7 +2,7 @@ import sounddevice as sd
 import numpy as np
 import os
 from google import genai
-from google.genai import types
+from google import types
 import asyncio
 from dotenv import load_dotenv
 
