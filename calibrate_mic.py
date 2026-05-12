@@ -1,6 +1,8 @@
 import sounddevice as sd
 import numpy as np
 import sys
+import os
+from dotenv import set_key
 
 def calibrate_mic():
     # Ricava la frequenza di campionamento predefinita
@@ -41,8 +43,22 @@ def calibrate_mic():
                 sd.sleep(100)
     except KeyboardInterrupt:
         print(f"\n\nCalibrazione terminata.")
-        print(f"Consiglio: Imposta 'silence_threshold' a circa {int(max_peak * 0.7)} "
-              f"se stavi parlando, o poco sopra {int(max_peak)} se eri in silenzio.")
+        
+        # Calcoliamo una soglia ideale assumendo che la calibrazione sia stata fatta in silenzio (rumore di fondo)
+        suggested_threshold = int(max_peak * 1.2)
+        
+        print(f"Consigli: Imposta 'silence_threshold' a circa {int(max_peak * 0.7)} se stavi parlando,")
+        print(f"o a circa {suggested_threshold} se eri in silenzio (rumore di fondo).")
+        
+        # Salvataggio automatico nel file .env
+        env_path = ".env"
+        try:
+            if not os.path.exists(env_path):
+                open(env_path, 'w').close()
+            set_key(env_path, "SILENCE_THRESHOLD", str(suggested_threshold))
+            print(f"\n[INFO] Soglia per il rumore di fondo ({suggested_threshold}) salvata automaticamente in '{env_path}'.")
+        except Exception as e:
+            print(f"\n[ERRORE] Impossibile salvare automaticamente nel file .env: {e}")
 
 if __name__ == "__main__":
     calibrate_mic()

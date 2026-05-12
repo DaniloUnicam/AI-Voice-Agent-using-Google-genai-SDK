@@ -1,23 +1,26 @@
 import sounddevice as sd
 import numpy as np
 from google import genai
-from google.genai import types
+from google.genai import types # type: ignore
 import asyncio
 from dotenv import load_dotenv
 import queue
 import sys
+import os
+import argparse
 
 load_dotenv()
 
 class ContinuousVoiceAgent:
-    def __init__(self, model="gemini-3.1-flash-live-preview", silence_threshold=3000):
+    def __init__(self, model="gemini-3.1-flash-live-preview", silence_threshold=None):
         self.client = genai.Client()
         self.model = model
         # Ricava automaticamente la frequenza di campionamento del microfono di sistema
         self.in_samplerate = int(sd.query_devices(kind='input')['default_samplerate'])
         
         # Soglia di volume sotto la quale consideriamo l'audio "silenzio" (es. rumore di fondo)
-        self.silence_threshold = 3000
+        env_threshold = os.getenv("SILENCE_THRESHOLD")
+        self.silence_threshold = silence_threshold if silence_threshold is not None else (int(env_threshold) if env_threshold else 3000)
         
         # Coda per raccogliere i chunk audio in arrivo dal microfono
         self.audio_in_queue = queue.Queue()
@@ -190,7 +193,12 @@ class ContinuousVoiceAgent:
             print("\nChiamata terminata.")
 
 if __name__ == "__main__":
-    agent = ContinuousVoiceAgent()
+    parser = argparse.ArgumentParser(description="Avvia l'agente vocale continuo.")
+    parser.add_argument("--threshold", type=int, default=None, 
+                        help="Valore per la soglia di silenzio (sovrascrive il .env). Es: --threshold 4000")
+    args = parser.parse_args()
+    
+    agent = ContinuousVoiceAgent(silence_threshold=args.threshold)
     try:
         asyncio.run(agent.start())
     except KeyboardInterrupt:
