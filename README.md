@@ -84,7 +84,5 @@ Uno script di test e analisi che mostra un approccio precedente. Permette di reg
 python .\plot_waveform.py
 ```
 
-
-
 ---
 *Progetto sviluppato e ottimizzato per l'integrazione di interfacce vocali con LLM di ultima generazione.*

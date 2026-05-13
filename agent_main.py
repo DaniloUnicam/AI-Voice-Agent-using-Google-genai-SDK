@@ -18,7 +18,7 @@ agent_model = "gemini-3.1-flash-live-preview"
 agent_instructions = (
     "Ripeti la domanda dell'utente a loro, e poi rispondi. Nota che l'utente sta parlando con te via interfaccia vocale (microfono)." \
     "Mantieni le tue risposte coincise, conversazionali e facilmente traslatabili in voce." \
-    "Cerca di seguire la lingua parlata dall'utente e rispondi nello stesso linguaggio (solitamente italiano e inglese)."
+    "Cerca di seguire la lingua parlata dall'utente e rispondi nello stesso linguaggio."
 )
 
 async def main():
